@@ -19,6 +19,7 @@ main.fill((0,0,0))
 
 pygame.display.flip()
 vitesse = 3
+best = 0
 
 textMot = pygame.font.SysFont("comicsansms",30,True)
 titre_Mot = pygame.font.SysFont("comicsansms",60,True)
@@ -101,7 +102,7 @@ class Mots:
 ########################################
 
 def play():
-	global vitesse
+	global vitesse,best
 	vitesse = 3
 
 	score = 0
@@ -127,6 +128,14 @@ def play():
 			if event.type == pygame.QUIT :
 				run = False
 
+			if event.type == KEYDOWN :
+				if event.unicode == Current_mot.nom[0]:
+					Current_mot.set_nom(Current_mot.nom[1:])
+
+			if event.type == MOUSEBUTTONDOWN and Current_mot.detruit():
+				run = False
+				play()
+
 		
 
 
@@ -140,6 +149,7 @@ def play():
 
 		#AFFICHAGE DU MOT
 		titre_perdu = titre_Mot.render("PERDU", True, (150,0,0),(0,0,0))
+		titre_best = titre_Mot.render("BEST : " + str(best),True,(150,0,0),(0,0,0))
 		mot_aff = textMot.render(Current_mot.nom, True, (150,0,0), (0,0,0))
 
 		main.blit(mot_aff,(Current_mot.x, Current_mot.y))
@@ -158,19 +168,16 @@ def play():
 		if not(PERDU):
 			Current_mot.deplace()
 
-			if event.type == KEYDOWN :
-				if event.unicode == Current_mot.nom[0]:
-					Current_mot.set_nom(Current_mot.nom[1:])
+			
 
 		#PERDU
 		if Current_mot.detruit():
 			main.fill((0,0,0))
 			main.blit(titre_perdu, (70,300))
+			main.blit(titre_best,(60,450))
 			PERDU = True
 
-		if event.type == MOUSEBUTTONDOWN and Current_mot.detruit():
-			run = False
-			play()
+		
 
 
 		#AUGMENTATION DE LA VITESSE
@@ -182,6 +189,9 @@ def play():
 		#AFFICHAGE DU SCORE
 		score_aff = textMot.render("Score : " + str(score),True,(150,0,0),(0,0,0))
 		main.blit(score_aff,(10,10))
+
+		if best<score:
+			best = score
 
 		
 			
